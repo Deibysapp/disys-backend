@@ -15,11 +15,13 @@ const authRoutes = require('./routes/authRoutes');
 const ventasRoutes = require('./routes/ventasRoutes');
 const masterRoutes = require('./routes/masterRoutes');
 const reportesRoutes = require('./routes/reportesRoutes');
+const superMasterRoutes = require('./routes/superMasterRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/ventas', ventasRoutes);
 app.use('/api/master', masterRoutes);
 app.use('/api/reportes', reportesRoutes);
+app.use('/api/super-master', superMasterRoutes);
 
 // Ruta de prueba para verificar que el servidor de DiSys está vivo
 app.get('/', (req, res) => {
