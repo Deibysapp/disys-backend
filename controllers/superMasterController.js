@@ -14,6 +14,7 @@ const superMasterController = {
             const nuevoMaster = await Usuario.createMaster(superMasterId, username, pin);
             res.status(201).json({ success: true, message: 'Master creado exitosamente', data: nuevoMaster });
         } catch (error) {
+            console.error("Detalle del error interno:", error); // <-- Agrega esta línea
             if (error.code === '23505') {
                 return res.status(400).json({ success: false, error: 'El nombre de usuario ya existe' });
             }
