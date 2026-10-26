@@ -10,6 +10,7 @@ router.use(verificarRol(['master']));
 // Endpoints
 router.post('/crear-vendedor', masterController.crearVendedor);
 router.post('/crear-sorteo', masterController.crearSorteo);
+router.delete('/eliminar-sorteo/:id', verificarToken, masterController.eliminarSorteo);
 router.get('/dashboard/:sorteoId', masterController.obtenerDashboard);
 
 module.exports = router;

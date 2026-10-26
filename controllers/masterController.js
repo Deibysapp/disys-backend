@@ -20,20 +20,47 @@ const masterController = {
         }
     },
 
-    // 2. Configurar un nuevo sorteo
+    // 2. Configurar un nuevo sorteo (Actualizado con nuevos campos)
     crearSorteo: async (req, res) => {
         try {
             const masterId = req.usuario.id;
-            const dataSorteo = { ...req.body, masterId };
+            const { nombre_sorteo, cantidad_numeros, precio_boleto, fecha_sorteo, hora_sorteo, loteria, premios, modalidad_ganadora } = req.body;
 
-            const nuevoSorteo = await Sorteo.createSorteo(dataSorteo);
-            res.status(201).json({ success: true, message: 'Sorteo configurado y listo', data: nuevoSorteo });
+            const query = `
+                INSERT INTO sorteos (master_id, nombre_sorteo, cantidad_numeros, precio_boleto, fecha_sorteo, hora_sorteo, loteria, premios, modalidad_ganadora)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;
+            `;
+            const values = [masterId, nombre_sorteo, cantidad_numeros, precio_boleto, fecha_sorteo, hora_sorteo, loteria, premios, modalidad_ganadora];
+
+            const { rows } = await pool.query(query, values);
+            res.status(201).json({ success: true, message: 'Rifa configurada exitosamente', data: rows[0] });
         } catch (error) {
+            console.error('Error en BD:', error);
             res.status(500).json({ success: false, error: 'Error al crear el sorteo' });
         }
     },
 
-    // 3. Obtener el Dashboard de Rendimiento de los vendedores
+    // 3. Eliminar un sorteo manualmente
+    eliminarSorteo: async (req, res) => {
+        try {
+            const masterId = req.usuario.id;
+            const sorteoId = req.params.id;
+
+            // Se exige master_id por seguridad para que un master no borre sorteos de otro
+            const query = 'DELETE FROM sorteos WHERE id = $1 AND master_id = $2 RETURNING *';
+            const { rowCount } = await pool.query(query, [sorteoId, masterId]);
+
+            if (rowCount === 0) {
+                return res.status(404).json({ success: false, error: 'Sorteo no encontrado o sin permisos' });
+            }
+
+            res.status(200).json({ success: true, message: 'Sorteo eliminado permanentemente' });
+        } catch (error) {
+            res.status(500).json({ success: false, error: 'Error al eliminar el sorteo' });
+        }
+    },
+
+    // 4. Obtener el Dashboard de Rendimiento de los vendedores
     obtenerDashboard: async (req, res) => {
         try {
             const sorteoId = req.params.sorteoId;
