@@ -6,10 +6,10 @@ const { verificarToken, verificarRol } = require('../middlewares/auth');
 router.use(verificarToken);
 router.use(verificarRol(['master', 'vendedor']));
 
-// Endpoints alineados con el nuevo controlador
 router.get('/sorteo-activo/:sorteoId', ventasController.obtenerSorteoActivo);
 router.get('/boletos-estado/:sorteoId', ventasController.obtenerBoletosSorteo);
 router.post('/apartar', ventasController.apartarNumero);
+router.put('/pagar/:boletoId', ventasController.pagarBoleto);
+router.delete('/liberar/:boletoId', ventasController.liberarNumero);
 
-// Nota: Las rutas de pagar y liberar las agregaremos cuando hagamos el módulo de cobranza
 module.exports = router;
